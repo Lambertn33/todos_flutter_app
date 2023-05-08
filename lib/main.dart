@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todos_http_app/helpers/constants.dart';
 import 'package:todos_http_app/screens/home/homepage.dart';
 
 void main() {
@@ -18,7 +19,10 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: Constants.mainAppFont
+      ),
       home: const HomePage()
     );
   }
