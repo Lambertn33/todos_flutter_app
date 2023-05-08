@@ -25,6 +25,8 @@ class _CreateTodoState extends State<CreateTodo> {
 
     http.Response response = await TodoServices().createTodo(createdTodo);
     if (response.statusCode == Constants.httpResponseCreateStatus) {
+      titleController.text = '';
+      descriptionController.text = '';
       showSnackBar('Todo created successfully.', Colors.green.shade800);
     } else {
       showSnackBar('error.. please retry', Colors.red.shade800);
