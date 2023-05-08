@@ -74,7 +74,7 @@ class _TodoListState extends State<TodoList> {
                       itemCount: initialTodos.length,
                       itemBuilder: (context, index) {
                         Todo todo = initialTodos[index];
-                        return todoWidget(todo);
+                        return todoWidget(todo, index);
                       },
                     )
                   : emptyDataWidget())
@@ -94,11 +94,11 @@ class _TodoListState extends State<TodoList> {
   }
 }
 
-Card todoWidget(Todo todo) {
+Card todoWidget(Todo todo, int index) {
   return Card(
     child: ListTile(
-      leading: const CircleAvatar(
-        child: Text('T', textAlign: TextAlign.center),
+      leading: CircleAvatar(
+        child: Text('${index + 1}', textAlign: TextAlign.center),
       ),
       title: Text(
         todo.title,
