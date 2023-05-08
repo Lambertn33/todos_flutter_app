@@ -17,6 +17,35 @@ class _CreateTodoState extends State<CreateTodo> {
         elevation: 2,
         title: Text(Constants.createAppTitle),
       ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            TextField(
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                hintText: "title",
+              ),
+            ),
+            const SizedBox(height: 16,),
+            TextField(
+              keyboardType: TextInputType.multiline,
+              minLines: 4,
+              maxLines: 6,
+              decoration: InputDecoration(
+                hintText: "description",
+              ),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text(Constants.createAppTitle),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
