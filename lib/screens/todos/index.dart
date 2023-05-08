@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:todos_http_app/helpers/constants.dart';
 import 'package:todos_http_app/models/todo_model.dart';
 import 'package:todos_http_app/screens/todos/create.dart';
+import 'package:todos_http_app/screens/todos/edit.dart';
 import 'package:todos_http_app/services/todos_services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
@@ -57,7 +58,7 @@ class _TodoListState extends State<TodoList> {
       showSnackBar('Error... please try again', Colors.red.shade900);
     }
   }
-  
+
   // show success/error message
   void showSnackBar(String message, Color color) {
     final snackBar = SnackBar(
@@ -71,10 +72,21 @@ class _TodoListState extends State<TodoList> {
   }
 
   //navigate to create page
-  Future<void> navigateToAddTodoPage() async{
+  Future<void> navigateToAddTodoPage() async {
     final addTodoRoute =
         MaterialPageRoute(builder: (context) => const CreateTodo());
     await Navigator.of(context).push(addTodoRoute);
+    setState(() {
+      isLoading = true;
+    });
+    getTodos();
+  }
+
+  //navigate to edit page
+  Future<void> navigateToEditTodoPage(todo) async {
+    final editTodoRoute =
+        MaterialPageRoute(builder: (context) => EditTodo(todo: todo));
+    await Navigator.of(context).push(editTodoRoute);
     setState(() {
       isLoading = true;
     });
@@ -86,7 +98,6 @@ class _TodoListState extends State<TodoList> {
     super.initState();
     getTodos();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +147,9 @@ class _TodoListState extends State<TodoList> {
         trailing: PopupMenuButton(onSelected: (value) {
           if (value == 'delete') {
             deleteTodo(todo.id);
+          }
+          else if (value == 'edit') {
+            navigateToEditTodoPage(todo);
           }
         }, itemBuilder: (context) {
           return [
