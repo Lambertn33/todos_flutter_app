@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:todos_http_app/helpers/constants.dart';
 import 'package:todos_http_app/models/todo_model.dart';
+import 'package:todos_http_app/screens/reusable/drawer.dart';
 import 'package:todos_http_app/screens/reusable/snackbar.dart';
 import 'package:todos_http_app/screens/todos/create.dart';
 import 'package:todos_http_app/screens/todos/edit.dart';
@@ -62,7 +63,6 @@ class _TodoListState extends State<TodoList> {
     }
   }
 
-
   //navigate to create page
   Future<void> navigateToAddTodoPage() async {
     final addTodoRoute =
@@ -99,6 +99,7 @@ class _TodoListState extends State<TodoList> {
         elevation: 2,
         title: Text(Constants.indexAppTitle),
       ),
+      drawer: mainDrawer(context),
       body: RefreshIndicator(
         onRefresh: () async {
           getTodos();
@@ -139,8 +140,7 @@ class _TodoListState extends State<TodoList> {
         trailing: PopupMenuButton(onSelected: (value) {
           if (value == 'delete') {
             deleteTodo(todo.id);
-          }
-          else if (value == 'edit') {
+          } else if (value == 'edit') {
             navigateToEditTodoPage(todo);
           }
         }, itemBuilder: (context) {

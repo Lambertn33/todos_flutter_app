@@ -11,4 +11,6 @@ class Constants {
   };
 
   static String url = 'https://api.nstack.in/v1/todos';
+
+  static String imagesUrl = "assets/images";
 }

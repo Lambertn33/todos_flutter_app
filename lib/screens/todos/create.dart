@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:todos_http_app/helpers/constants.dart';
+import 'package:todos_http_app/screens/reusable/drawer.dart';
 import 'package:todos_http_app/screens/reusable/snackbar.dart';
 import 'package:todos_http_app/services/todos_services.dart';
 import 'package:http/http.dart' as http;
@@ -55,6 +56,7 @@ class _CreateTodoState extends State<CreateTodo> {
         elevation: 2,
         title: Text(Constants.createAppTitle),
       ),
+      drawer: mainDrawer(context),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
