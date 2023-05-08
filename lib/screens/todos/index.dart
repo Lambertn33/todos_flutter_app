@@ -146,10 +146,6 @@ class _TodoListState extends State<TodoList> {
         }, itemBuilder: (context) {
           return [
             const PopupMenuItem(
-              value: 'view',
-              child: Text('View'),
-            ),
-            const PopupMenuItem(
               value: 'edit',
               child: Text('Edit'),
             ),

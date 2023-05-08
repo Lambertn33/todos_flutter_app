@@ -65,7 +65,7 @@ Drawer mainDrawer(BuildContext context) {
                       builder: (context) => const TodoList()));
                 },
                 title: const Text('Todo List'),
-                leading: const Icon(Icons.call),
+                leading: const Icon(Icons.list),
                 trailing: const Icon(Icons.arrow_forward),
               ),
               const Divider(),
