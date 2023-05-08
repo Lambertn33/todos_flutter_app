@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todos_http_app/helpers/constants.dart';
+import 'package:todos_http_app/services/todos_services.dart';
+import 'package:http/http.dart' as http;
 
 class CreateTodo extends StatefulWidget {
   const CreateTodo({super.key});
@@ -9,6 +11,26 @@ class CreateTodo extends StatefulWidget {
 }
 
 class _CreateTodoState extends State<CreateTodo> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
+  Future<void> createTodo() async {
+    final title = titleController.text;
+    final description = descriptionController.text;
+    final createdTodo = {
+      "title": title,
+      "description": description,
+      "is_completed": false
+    };
+
+    http.Response response = await TodoServices().createTodo(createdTodo);
+    if (response.statusCode == Constants.httpResponseCreateStatus) {
+      print('success.. todo created');
+    } else {
+      print(' error... todo not created');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,17 +44,21 @@ class _CreateTodoState extends State<CreateTodo> {
         child: Column(
           children: [
             TextField(
+              controller: titleController,
               keyboardType: TextInputType.text,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "title",
               ),
             ),
-            const SizedBox(height: 16,),
+            const SizedBox(
+              height: 16,
+            ),
             TextField(
+              controller: descriptionController,
               keyboardType: TextInputType.multiline,
               minLines: 4,
               maxLines: 6,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "description",
               ),
             ),
@@ -40,7 +66,7 @@ class _CreateTodoState extends State<CreateTodo> {
               height: 12,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: createTodo,
               child: Text(Constants.createAppTitle),
             )
           ],
