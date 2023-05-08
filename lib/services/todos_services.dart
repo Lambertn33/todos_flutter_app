@@ -13,7 +13,13 @@ class TodoServices {
   //create todo
   Future createTodo(newTodo) async {
     http.Response response = await http.post(Uri.parse(Constants.url),
-        body: jsonEncode(newTodo), headers: Constants.httpCreateHeaders);
+        body: jsonEncode(newTodo), headers: Constants.httpHeaders);
+    return response;
+  }
+
+  Future editTodo(todoId, editedTodo) async {
+    http.Response response = await http.put(Uri.parse('${Constants.url}/$todoId'),
+        body: jsonEncode(editedTodo), headers: Constants.httpHeaders);
     return response;
   }
 

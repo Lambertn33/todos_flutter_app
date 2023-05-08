@@ -6,7 +6,7 @@ class Constants {
   static int httpResponseIndexStatus = 200;
   static int httpResponseCreateStatus = 201;
 
-  static Map<String, String> httpCreateHeaders = {
+  static Map<String, String> httpHeaders = {
     'Content-Type': 'application/json'
   };
 

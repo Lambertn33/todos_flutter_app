@@ -23,9 +23,47 @@ class _EditTodoState extends State<EditTodo> {
   void initState() {
     super.initState();
     final Todo todoToEdit = widget.todo;
-    todoStatus = widget.todo.isCompleted ? TodoStatus.completed : TodoStatus.pending;
+    todoStatus =
+        widget.todo.isCompleted ? TodoStatus.completed : TodoStatus.pending;
     titleController.text = todoToEdit.title;
     descriptionController.text = todoToEdit.description;
+  }
+
+  Future<void> editTodo() async {
+    final todoId = widget.todo.id;
+    final title = titleController.text;
+    final description = descriptionController.text;
+    late bool status;
+
+    if (todoStatus == TodoStatus.completed) {
+      status = true;
+    } else {
+      status = false;
+    }
+
+    final editedTodo = {
+      "title": title,
+      "description": description,
+      "is_completed": status
+    };
+
+    http.Response response = await TodoServices().editTodo(todoId, editedTodo);
+    if (response.statusCode == Constants.httpResponseIndexStatus) {
+      showSnackBar('Todo updated successfully.', Colors.green.shade800);
+    } else {
+      showSnackBar('error.. please retry', Colors.red.shade800);
+    }
+  }
+
+  void showSnackBar(String message, Color color) {
+    final snackBar = SnackBar(
+      backgroundColor: color,
+      content: Text(
+        message,
+        style: const TextStyle(fontSize: 18, color: Colors.white),
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -102,7 +140,7 @@ class _EditTodoState extends State<EditTodo> {
                 height: 12,
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: editTodo,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 child: Text(Constants.editAppTitle),
               )
