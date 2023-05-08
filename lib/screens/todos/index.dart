@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:todos_http_app/helpers/constants.dart';
 import 'package:todos_http_app/models/todo_model.dart';
 import 'package:todos_http_app/screens/todos/create.dart';
 import 'package:todos_http_app/services/todos_services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
 
 class TodoList extends StatefulWidget {
   const TodoList({super.key});
@@ -13,10 +16,35 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
+  bool isLoading = true;
+  List<Todo> initialTodos = [];
   //initially fetch todos
-  Future<List<Todo>> getTodos() async {
-    List<Todo> todos = await TodoServices().getTodos();
-    return todos;
+  Future<void> getTodos() async {
+    List<Todo> todos = [];
+    http.Response response = await TodoServices().getTodos(20);
+    if (response.statusCode == Constants.httpResponseIndexStatus) {
+      final fetchedResponse = jsonDecode(response.body);
+      final fetchedTodos = fetchedResponse['items'];
+      for (var fetchedTodo in fetchedTodos) {
+        Todo todo = Todo(
+          id: fetchedTodo['_id'],
+          title: fetchedTodo['title'],
+          description: fetchedTodo['description'],
+          isCompleted: fetchedTodo['is_completed'],
+        );
+        todos.add(todo);
+      }
+    }
+    setState(() {
+      initialTodos = todos;
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getTodos();
   }
 
   //navigate to create page
@@ -34,36 +62,30 @@ class _TodoListState extends State<TodoList> {
         elevation: 2,
         title: Text(Constants.indexAppTitle),
       ),
-      body: FutureBuilder(
-          future: getTodos(),
-          builder: ((context, snapshot) {
-            if (snapshot.hasError) {
-              return errorWidget();
-            } else if (!snapshot.hasData) {
-              return const Center(
-                child: SpinKitWave(
-                  color: Colors.white,
-                  size: 30,
-                ),
-              );
-            } else {
-              List<Todo> todos = snapshot.data!;
-              if (todos.isNotEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: ListView.builder(
-                    itemCount: todos.length,
-                    itemBuilder: (context, index) {
-                      Todo todo = todos[index];
-                      return todoWidget(todo);
-                    },
+      body: RefreshIndicator(
+        onRefresh: () async {
+          getTodos();
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: !isLoading
+              ? (initialTodos.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: initialTodos.length,
+                      itemBuilder: (context, index) {
+                        Todo todo = initialTodos[index];
+                        return todoWidget(todo);
+                      },
+                    )
+                  : emptyDataWidget())
+              : const Center(
+                  child: SpinKitCubeGrid(
+                    color: Colors.white,
+                    size: 30,
                   ),
-                );
-              } else {
-                return emptyDataWidget();
-              }
-            }
-          })),
+                ),
+        ),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: navigateToAddTodoPage,
         label: Text(Constants.createAppTitle),
@@ -74,29 +96,25 @@ class _TodoListState extends State<TodoList> {
 
 Card todoWidget(Todo todo) {
   return Card(
-    child: Padding(
-    padding: const EdgeInsets.all(2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            title: Text(
-              todo.title,
-              style: const TextStyle(fontSize: 20),
-            ),
-          ),
-          Container(
-            width: 80,
-            alignment: Alignment.center,
-            padding: const EdgeInsets.all(4),
-            margin: const EdgeInsets.only(left: 16, bottom: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: !todo.isCompleted ? Colors.red.shade800 : Colors.green.shade800,
-            ),
-            child: Text(todo.isCompleted ? 'Completed' : 'Pending'),
-          )
-        ],
+    child: ListTile(
+      leading: const CircleAvatar(
+        child: Text('T', textAlign: TextAlign.center),
+      ),
+      title: Text(
+        todo.title,
+        style: const TextStyle(fontSize: 20),
+      ),
+      subtitle: Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Text(
+          todo.isCompleted ? 'Completed' : 'Pending',
+          style: TextStyle(
+              color: todo.isCompleted
+                  ? Colors.green.shade900
+                  : Colors.red.shade900,
+              fontWeight: FontWeight.w700,
+              fontSize: 16),
+        ),
       ),
     ),
   );
@@ -106,7 +124,8 @@ Center errorWidget() {
   return Center(
     child: Column(
       children: [
-        const Text('an error occured.. please try again'),
+        const Text('an error occured.. please try again',
+            style: TextStyle(fontSize: 20)),
         ElevatedButton(
           onPressed: () {},
           child: const Text('Fetch again'),
@@ -118,6 +137,9 @@ Center errorWidget() {
 
 Center emptyDataWidget() {
   return const Center(
-    child: Text('Todo list is empty'),
+    child: Text(
+      'Todo list is empty',
+      style: TextStyle(fontSize: 20),
+    ),
   );
 }

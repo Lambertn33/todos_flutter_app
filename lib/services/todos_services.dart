@@ -5,23 +5,10 @@ import 'package:todos_http_app/models/todo_model.dart';
 
 class TodoServices {
   //list todos
-  Future<List<Todo>> getTodos() async {
-    List<Todo> todos = [];
-    http.Response response = await http.get(Uri.parse(Constants.url));
-    if (response.statusCode == 200) {
-      final fetchedResponse = jsonDecode(response.body);
-      final fetchedTodos = fetchedResponse['items'];
-      for (var fetchedTodo in fetchedTodos) {
-        Todo todo = Todo(
-          id: fetchedTodo['_id'],
-          title: fetchedTodo['title'],
-          description: fetchedTodo['description'],
-          isCompleted: fetchedTodo['is_completed'],
-        );
-        todos.add(todo);
-      }
-    }
-    return todos;
+  Future getTodos(int limit) async {
+    http.Response response =
+        await http.get(Uri.parse('${Constants.url}?page=1&limit=$limit'));
+    return response;
   }
 
   //create todo
