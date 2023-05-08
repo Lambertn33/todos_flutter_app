@@ -25,10 +25,20 @@ class _CreateTodoState extends State<CreateTodo> {
 
     http.Response response = await TodoServices().createTodo(createdTodo);
     if (response.statusCode == Constants.httpResponseCreateStatus) {
-      print('success.. todo created');
+      showSnackBar('Todo created successfully.', Colors.green.shade800);
     } else {
-      print(' error... todo not created');
+      showSnackBar('error.. please retry', Colors.red.shade800);
     }
+  }
+
+  void showSnackBar(String message, Color color) {
+    final snackBar = SnackBar(
+        backgroundColor: color,
+        content: Text(
+          message,
+          style: const TextStyle(fontSize: 18, color: Colors.white),
+        ));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
