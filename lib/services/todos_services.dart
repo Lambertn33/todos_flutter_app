@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:todos_http_app/helpers/constants.dart';
-import 'package:todos_http_app/models/todo_model.dart';
 
 class TodoServices {
   //list todos
