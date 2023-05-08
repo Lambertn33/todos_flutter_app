@@ -46,11 +46,12 @@ class _CreateTodoState extends State<CreateTodo> {
 
   void showSnackBar(String message, Color color) {
     final snackBar = SnackBar(
-        backgroundColor: color,
-        content: Text(
-          message,
-          style: const TextStyle(fontSize: 18, color: Colors.white),
-        ));
+      backgroundColor: color,
+      content: Text(
+        message,
+        style: const TextStyle(fontSize: 18, color: Colors.white),
+      ),
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 

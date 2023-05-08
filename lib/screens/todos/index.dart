@@ -18,6 +18,7 @@ class TodoList extends StatefulWidget {
 class _TodoListState extends State<TodoList> {
   bool isLoading = true;
   List<Todo> initialTodos = [];
+
   //initially fetch todos
   Future<void> getTodos() async {
     List<Todo> todos = [];
@@ -39,6 +40,33 @@ class _TodoListState extends State<TodoList> {
       initialTodos = todos;
       isLoading = false;
     });
+  }
+
+  // delete todo
+  Future<void> deleteTodo(todoId) async {
+    http.Response response = await TodoServices().deleteTodo(todoId);
+    if (response.statusCode == Constants.httpResponseIndexStatus) {
+      final updatedTodos =
+          initialTodos.where((element) => element.id != todoId).toList();
+
+      setState(() {
+        initialTodos = updatedTodos;
+      });
+      showSnackBar('Todo delete successfully', Colors.green.shade900);
+    } else {
+      showSnackBar('Error... please try again', Colors.red.shade900);
+    }
+  }
+
+  void showSnackBar(String message, Color color) {
+    final snackBar = SnackBar(
+      backgroundColor: color,
+      content: Text(
+        message,
+        style: const TextStyle(fontSize: 18, color: Colors.white),
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -92,54 +120,74 @@ class _TodoListState extends State<TodoList> {
       ),
     );
   }
-}
 
-Card todoWidget(Todo todo, int index) {
-  return Card(
-    child: ListTile(
-      leading: CircleAvatar(
-        child: Text('${index + 1}', textAlign: TextAlign.center),
-      ),
-      title: Text(
-        todo.title,
-        style: const TextStyle(fontSize: 20),
-      ),
-      subtitle: Container(
-        margin: const EdgeInsets.only(top: 8),
-        child: Text(
-          todo.isCompleted ? 'Completed' : 'Pending',
-          style: TextStyle(
-              color: todo.isCompleted
-                  ? Colors.green.shade900
-                  : Colors.red.shade900,
-              fontWeight: FontWeight.w700,
-              fontSize: 16),
+  Card todoWidget(Todo todo, int index) {
+    return Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          child: Text('${index + 1}', textAlign: TextAlign.center),
+        ),
+        trailing: PopupMenuButton(onSelected: (value) {
+          if (value == 'delete') {
+            deleteTodo(todo.id);
+          }
+        }, itemBuilder: (context) {
+          return [
+            PopupMenuItem(
+              child: Text('View'),
+              value: 'view',
+            ),
+            PopupMenuItem(
+              child: Text('Edit'),
+              value: 'edit',
+            ),
+            PopupMenuItem(
+              child: Text('Delete'),
+              value: 'delete',
+            ),
+          ];
+        }),
+        title: Text(
+          todo.title,
+          style: const TextStyle(fontSize: 20),
+        ),
+        subtitle: Container(
+          margin: const EdgeInsets.only(top: 8),
+          child: Text(
+            todo.isCompleted ? 'Completed' : 'Pending',
+            style: TextStyle(
+                color: todo.isCompleted
+                    ? Colors.green.shade900
+                    : Colors.red.shade900,
+                fontWeight: FontWeight.w700,
+                fontSize: 16),
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Center errorWidget() {
-  return Center(
-    child: Column(
-      children: [
-        const Text('an error occured.. please try again',
-            style: TextStyle(fontSize: 20)),
-        ElevatedButton(
-          onPressed: () {},
-          child: const Text('Fetch again'),
-        ),
-      ],
-    ),
-  );
-}
+  Center errorWidget() {
+    return Center(
+      child: Column(
+        children: [
+          const Text('an error occured.. please try again',
+              style: TextStyle(fontSize: 20)),
+          ElevatedButton(
+            onPressed: () {},
+            child: const Text('Fetch again'),
+          ),
+        ],
+      ),
+    );
+  }
 
-Center emptyDataWidget() {
-  return const Center(
-    child: Text(
-      'Todo list is empty',
-      style: TextStyle(fontSize: 20),
-    ),
-  );
+  Center emptyDataWidget() {
+    return const Center(
+      child: Text(
+        'Todo list is empty',
+        style: TextStyle(fontSize: 20),
+      ),
+    );
+  }
 }

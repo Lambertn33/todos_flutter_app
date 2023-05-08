@@ -16,4 +16,10 @@ class TodoServices {
         body: jsonEncode(newTodo), headers: Constants.httpCreateHeaders);
     return response;
   }
+
+  //delete todo
+  Future deleteTodo(todoId) async {
+    http.Response response = await http.delete(Uri.parse('${Constants.url}/$todoId'));
+    return response;
+  }
 }
