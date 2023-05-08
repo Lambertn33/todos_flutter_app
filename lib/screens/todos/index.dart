@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:todos_http_app/helpers/constants.dart';
 import 'package:todos_http_app/models/todo_model.dart';
+import 'package:todos_http_app/screens/reusable/snackbar.dart';
 import 'package:todos_http_app/screens/todos/create.dart';
 import 'package:todos_http_app/screens/todos/edit.dart';
 import 'package:todos_http_app/services/todos_services.dart';
@@ -23,7 +26,7 @@ class _TodoListState extends State<TodoList> {
   //initially fetch todos
   Future<void> getTodos() async {
     List<Todo> todos = [];
-    http.Response response = await TodoServices().getTodos(20);
+    http.Response response = await TodoServices.getTodos(20);
     if (response.statusCode == Constants.httpResponseIndexStatus) {
       final fetchedResponse = jsonDecode(response.body);
       final fetchedTodos = fetchedResponse['items'];
@@ -45,7 +48,7 @@ class _TodoListState extends State<TodoList> {
 
   // delete todo
   Future<void> deleteTodo(todoId) async {
-    http.Response response = await TodoServices().deleteTodo(todoId);
+    http.Response response = await TodoServices.deleteTodo(todoId);
     if (response.statusCode == Constants.httpResponseIndexStatus) {
       final updatedTodos =
           initialTodos.where((element) => element.id != todoId).toList();
@@ -53,23 +56,12 @@ class _TodoListState extends State<TodoList> {
       setState(() {
         initialTodos = updatedTodos;
       });
-      showSnackBar('Todo delete successfully', Colors.green.shade900);
+      showSnackBar(context, 'Todo delete successfully', Colors.green.shade900);
     } else {
-      showSnackBar('Error... please try again', Colors.red.shade900);
+      showSnackBar(context, 'Error... please try again', Colors.red.shade900);
     }
   }
 
-  // show success/error message
-  void showSnackBar(String message, Color color) {
-    final snackBar = SnackBar(
-      backgroundColor: color,
-      content: Text(
-        message,
-        style: const TextStyle(fontSize: 18, color: Colors.white),
-      ),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
 
   //navigate to create page
   Future<void> navigateToAddTodoPage() async {

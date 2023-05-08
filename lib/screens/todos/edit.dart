@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:todos_http_app/helpers/constants.dart';
 import 'package:todos_http_app/models/todo_model.dart';
+import 'package:todos_http_app/screens/reusable/snackbar.dart';
 import 'package:todos_http_app/services/todos_services.dart';
 import 'package:http/http.dart' as http;
 
@@ -47,23 +50,12 @@ class _EditTodoState extends State<EditTodo> {
       "is_completed": status
     };
 
-    http.Response response = await TodoServices().editTodo(todoId, editedTodo);
+    http.Response response = await TodoServices.editTodo(todoId, editedTodo);
     if (response.statusCode == Constants.httpResponseIndexStatus) {
-      showSnackBar('Todo updated successfully.', Colors.green.shade800);
+      showSnackBar(context, 'Todo updated successfully.', Colors.green.shade800);
     } else {
-      showSnackBar('error.. please retry', Colors.red.shade800);
+      showSnackBar(context, 'error.. please retry', Colors.red.shade800);
     }
-  }
-
-  void showSnackBar(String message, Color color) {
-    final snackBar = SnackBar(
-      backgroundColor: color,
-      content: Text(
-        message,
-        style: const TextStyle(fontSize: 18, color: Colors.white),
-      ),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
