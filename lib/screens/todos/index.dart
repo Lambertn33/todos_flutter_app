@@ -57,7 +57,8 @@ class _TodoListState extends State<TodoList> {
       showSnackBar('Error... please try again', Colors.red.shade900);
     }
   }
-
+  
+  // show success/error message
   void showSnackBar(String message, Color color) {
     final snackBar = SnackBar(
       backgroundColor: color,
@@ -69,18 +70,19 @@ class _TodoListState extends State<TodoList> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getTodos();
-  }
-
   //navigate to create page
   void navigateToAddTodoPage() {
     final addTodoRoute =
         MaterialPageRoute(builder: (context) => const CreateTodo());
     Navigator.of(context).push(addTodoRoute);
   }
+
+  @override
+  void initState() {
+    super.initState();
+    getTodos();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -133,17 +135,17 @@ class _TodoListState extends State<TodoList> {
           }
         }, itemBuilder: (context) {
           return [
-            PopupMenuItem(
-              child: Text('View'),
+            const PopupMenuItem(
               value: 'view',
+              child: Text('View'),
             ),
-            PopupMenuItem(
-              child: Text('Edit'),
+            const PopupMenuItem(
               value: 'edit',
+              child: Text('Edit'),
             ),
-            PopupMenuItem(
-              child: Text('Delete'),
+            const PopupMenuItem(
               value: 'delete',
+              child: Text('Delete'),
             ),
           ];
         }),
